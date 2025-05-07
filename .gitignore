@@ -1,6 +1,7 @@
 .venv
 .env
 .streamlit
+.devcontainer
 secrets.toml
 __pycache__
 **/.DS_Store

@@ -17,7 +17,7 @@ def github_read() -> dict:
     return data
 
 
-def github_write(data: dict):
+def github_write(data: dict) -> None:
     token = st.secrets["GITHUB_TOKEN"]
     g = Github(token)
 
