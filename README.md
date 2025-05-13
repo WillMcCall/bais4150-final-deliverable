@@ -6,5 +6,5 @@
 - Good Business Analytics Job Titles
   * Master of Business Analytics, Analyst, IT Analyst, Financial Analyst, Research Analyst, Business Analyst, Operations Support Analyst, Data Analyst, Process Improvement Analyst, Informatics Analyst, Sports Performance Analytics, Business Intelligence Analyst, Compliance Specialist, Consultant, Project Leader, Technical Leader, Enterprise Product Manager, Category Manager, Category Assistant, Category Coordinator, IT Manager, IT Specialist, Analytics Manager, Reporting & Analytics, Leadership Development, Program Associate, Marketing Specialist, Database Manager, Business Systems Analyst, Business Analytics, Data Analytics, Data Science
 - Good Accounting Job Titles
-  * Master of Accountancy, Accountant, Public Accounting, Private Accounting, Tax Accounting, Financial Accounting, Managerial Accounting, Accounting, CPA, Controller 
+  * Master of Accountancy, Accountant, Public Accounting, Private Accounting, Tax Accounting, Financial Accounting, Managerial Accounting, Accounting, CPA, Controller <br>
 [Source Code](https://github.com/WillMcCall/bais4150-final-deliverable)
