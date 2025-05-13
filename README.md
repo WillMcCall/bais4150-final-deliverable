@@ -3,7 +3,7 @@
 
 [Job Sourcer](https://job-sourcer.streamlit.app)<br>
 
-Time taken by the job sourcer is affected by how many jobs and locations you use
+** Time taken by the job sourcer is affected by how many jobs and locations you use **
 
 - Good Finance Job Titles
   * Master of Finance, Treasury Analyst, Data Analyst, Financial Analyst, Corporate Financial Analyst, Credit Analyst, Market Analyst, Marketing Analyst, Investment Banking Analyst, Research Analyst, Capital Markets Analyst, Financial Consultant, Internal Auditor, Economist, Financial Planner, FP & A Associate, Portfolio Manager, Wealth Investment, Equities Trader, Investment Banking, Capital Markets, Wealth Management, Private Equity, Hedge Funds, Investments, Investment Management
