@@ -382,7 +382,7 @@ def get_jobs(
         dfs: list[pd.DataFrame] = []
         for job_title in titles:
             for location in locations:
-                dfs.append(scrape_jobs(
+                df = scrape_jobs(
                     site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
                     search_term=job_title,
                     location=location,
@@ -390,7 +390,11 @@ def get_jobs(
                     hours_old=(days_old * 24),
                     country_indeed='USA',
                     verbose=1
-                ))
+                )
+                df.insert(0, "category", category)
+                
+                dfs.append(df)
+                
                 progress_counter += ((100 / (sum_job_titles * len(locations))) / 100)
                 # Ensure progress_counter doesn't go over 1 in edge cases
                 if progress_counter > 1:
