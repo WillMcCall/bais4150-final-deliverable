@@ -70,6 +70,7 @@ def main():
             gpp_df = pd.read_csv(gpp_csv)
             
             international_jobs = utils.international_jobs(gpp_df, (finance_jobs + bais_jobs + accounting_jobs))
+            international_jobs = international_jobs.drop_duplicates().reset_index(drop=True)
         
             excel_data = utils.to_excel(jobs, international_jobs)
             
