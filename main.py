@@ -1,5 +1,4 @@
 from datetime import date
-from io import BytesIO
 
 import streamlit as st
 import pandas as pd
@@ -20,11 +19,13 @@ def main():
         
         
         days_old = st.slider("Days Old", 1, 90)
-        num_jobs = st.slider("Max number of jobs to output", 1, 50)
+        num_jobs = st.slider("Number of jobs per category", 1, 50)
         locations_input = st.text_area('Locations: (comma seperated)', locations_str)
         finance_jobs_input = st.text_area('Finance Jobs: (comma seperated)', finance_jobs_str)
         bais_jobs_input = st.text_area('BAIS Jobs: (comma seperated)', bais_jobs_str)
         accounting_jobs_input = st.text_area('Accounting Jobs: (comma seperated)', accounting_jobs_str)
+        
+        gpp_csv = st.file_uploader("Upload Handshake Data", type=["csv"])
         
         submitted = st.form_submit_button("Submit")
         
@@ -58,7 +59,15 @@ def main():
         
         st.dataframe(jobs)
         
-        excel_data = to_excel(jobs)
+        if gpp_csv:
+            gpp_df = pd.read_csv(gpp_csv)
+            
+            international_jobs = utils.international_jobs(gpp_df, (finance_jobs + bais_jobs + accounting_jobs))
+        
+            excel_data = utils.to_excel(jobs, international_jobs)
+            
+        else:
+            excel_data = utils.to_excel(jobs)
         
         st.download_button(
             label="Download Excel file",
@@ -66,13 +75,6 @@ def main():
             file_name=f"results_{date.today().strftime("%Y-%m-%d")}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        
-    def to_excel(df):
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False, sheet_name='Sheet1')
-        processed_data = output.getvalue()
-        return processed_data
 
 
 if __name__ == "__main__":
