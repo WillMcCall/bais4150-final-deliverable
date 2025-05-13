@@ -8,6 +8,8 @@ import utils
 
 
 def main():
+    st.title("Tippie Career Services Job Sourcer")
+    
     with st.form("my_form"):
         # Load initial form data
         data = db.github_read()
@@ -16,6 +18,7 @@ def main():
         finance_jobs_str = ", ".join(data["finance_jobs"])
         bais_jobs_str = ", ".join(data["bais_jobs"])
         accounting_jobs_str = ", ".join(data["accounting_jobs"])
+        exclusion_keywords_str = ", ".join(data["exclusion_keywords"])
         
         
         days_old = st.slider("Days Old", 1, 90)
@@ -24,6 +27,7 @@ def main():
         finance_jobs_input = st.text_area('Finance Jobs: (comma seperated)', finance_jobs_str)
         bais_jobs_input = st.text_area('BAIS Jobs: (comma seperated)', bais_jobs_str)
         accounting_jobs_input = st.text_area('Accounting Jobs: (comma seperated)', accounting_jobs_str)
+        exclusion_keywords_input = st.text_area('Keywords to Exclude: (comma seperated)', exclusion_keywords_str)
         
         gpp_csv = st.file_uploader("Upload Handshake Data", type=["csv"])
         
@@ -34,12 +38,14 @@ def main():
         finance_jobs = [job.strip() for job in finance_jobs_input.split(",")]
         bais_jobs = [job.strip() for job in bais_jobs_input.split(",")]
         accounting_jobs = [job.strip() for job in accounting_jobs_input.split(",")]
+        exclusion_keywords = [key.strip() for key in exclusion_keywords_input.split(",")]
         
         data = {
             "locations": locations,
             "finance_jobs": finance_jobs,
             "bais_jobs": bais_jobs,
-            "accounting_jobs": accounting_jobs
+            "accounting_jobs": accounting_jobs,
+            "exclusion_keywords": exclusion_keywords
         }
         db.github_write(data)
         
@@ -51,7 +57,8 @@ def main():
             },
             locations=locations,
             days_old=days_old,
-            num_jobs_wanted=num_jobs
+            num_jobs_wanted=num_jobs,
+            exclusion_keywords=exclusion_keywords
         )
         
         jobs = pd.concat([job_dfs["finance_df"], job_dfs["bais_df"], job_dfs["accounting_df"]], ignore_index=True)

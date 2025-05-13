@@ -270,7 +270,7 @@ def clean_jobs(jobs: pd.DataFrame) -> pd.DataFrame:
     return cleaned_jobs
     
 
-def score_jobs(jobs: pd.DataFrame, num_jobs) -> pd.DataFrame:
+def score_jobs(jobs: pd.DataFrame, num_jobs, exclusion_keywords) -> pd.DataFrame:
     
     def score_job(job):
         # Clean fields
@@ -324,20 +324,17 @@ def score_jobs(jobs: pd.DataFrame, num_jobs) -> pd.DataFrame:
         entry_level_score = 100 if any(re.search(pat, desc, flags=re.IGNORECASE) for pat in entry_patterns) else 0
 
         # — 5. Exclusion penalty for higher-level roles
-        exclusion_patterns = [
-            r"\bsr\.?\b", r"\bsenior\b", r"\bmanager\b", r"\bdirector\b",
-            r"\bvice[-\s]?president\b", r"\bvp\b", r"\bpresident\b", r"\bcfo\b",
-            r"\bchief\b", r"\blead\b", r"\bhead\b", r"\bprincipal\b", r"\bexecutive\b",
-            r"\bpartner\b", r"\bowner\b", r"\bfounder\b", r"\bofficer\b",
-            r"senior analyst", r"lead analyst", r"financial controller",
-            r"portfolio manager", r"investment manager", r"risk manager",
-            r"senior accountant", r"audit manager", r"tax manager",
-            r"finance manager", r"financial advisor", r"compliance officer",
-            r"business manager", r"accounting supervisor", r"budget director",
-            r"strategy consultant", r"engagement manager",
-            r"data architect", r"analytics architect", r"solutions architect",
-            r"senior consultant", r"principal consultant", r"erp consultant"
-        ]
+        def generate_exclusion_patterns(keywords):
+            patterns = []
+            for word in keywords:
+                word = word.lower()
+                word = re.escape(word)  # Escape special characters like ".", "$", etc.
+                word = word.replace(r"\ ", r"[-\s]?")  # Handle multi-word phrases like "vice president"
+                pattern = fr"\b{word}\b"
+                patterns.append(pattern)
+            return patterns
+        
+        exclusion_patterns = generate_exclusion_patterns(exclusion_keywords)
         exclusion_penalty = -9999 if any(re.search(pat, title, flags=re.IGNORECASE) for pat in exclusion_patterns) else 0
 
         # — 6. Salary cap bonus
@@ -368,11 +365,12 @@ def get_jobs(
     job_titles: dict[str, list[str]],
     locations: list[str],
     days_old: int,
-    num_jobs_wanted: int
+    num_jobs_wanted: int,
+    exclusion_keywords: list[str]
 ) -> dict[str, pd.DataFrame]:
     
     sum_job_titles = sum(len(lst) for lst in job_titles.values())
-    time_estimate_minutes = (len(locations) * sum_job_titles) / 60
+    time_estimate_minutes = (7 * (len(locations) * sum_job_titles)) / 60
     st.write(f"Time Estimate: {time_estimate_minutes:.1f} minutes")
     
     progress_bar = st.progress(0, text="Starting to look for jobs. Please wait...")
@@ -393,7 +391,7 @@ def get_jobs(
                     country_indeed='USA',
                     verbose=1
                 ))
-                progress_counter += ((100 / sum_job_titles) / 100)
+                progress_counter += ((100 / (sum_job_titles * len(locations))) / 100)
                 # Ensure progress_counter doesn't go over 1 in edge cases
                 if progress_counter > 1:
                     progress_counter = 1.0
@@ -403,7 +401,7 @@ def get_jobs(
         # Combine and process all scraped jobs for this category
         df = pd.concat(dfs, ignore_index=True)
         cleaned_df = clean_jobs(df)
-        final_df = score_jobs(cleaned_df, num_jobs_wanted)
+        final_df = score_jobs(cleaned_df, num_jobs_wanted, exclusion_keywords)
         
         output_dictionary[f"{category}_df"] = final_df
     
